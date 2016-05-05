@@ -1,0 +1,62 @@
+This is a simple header-only (C++11) JSON (de)serializer, based on jsoncpp library.
+
+Once I saw a nice project named 'sfserialization', which provided easy JSON (de)serialization.
+However it was a bit complex and included it's own JSON parser. And of course, there were bugs,
+some of them were not easy to fix. So I decided to create a serializer with a similiar interface,
+using known and well tested jsoncpp library.
+
+jsoncpp_serializer supports all basic datatypes ((u)int32/64, float/double, bool) and some STL types (vector, set, map, pair).
+
+
+Serialization and Deserialization
+---------------------------------
+
+For instance, you want to serialize your brand new class objects. All you need to do is define
+(de)serialization functions inside a class:
+
+#include <string>
+#include "json_serializer.h"
+#include "json_deserializer.h"
+
+struct Foo {
+	uint32_t num;
+	std::string str;
+
+	void serialize (Serialization::Serializer &s) const
+	{
+		s("num", num);
+		s("str", str);
+	}
+
+	bool deserialize(const Serialization::Deserializer &d)
+	{
+		bool suc = true;
+		suc = d("num", num) && suc;
+		suc = d("str", str) && suc;
+		return suc;
+	}
+};
+
+And now you're ready to serialize it:
+
+Foo obj;
+std::string json = Serialization::toJSON(obj);
+
+Looks easy, right?
+
+And now deserialization:
+
+Foo obj2;
+Serialization::fromJSON(json, obj2);
+
+
+Building & Usage
+----------------
+
+It's ready out of the box, just include the headers and make sure that your compiler can handle C++11.
+
+
+Problems or suggestions?
+------------------------
+
+The (de)serializer can be easily extended to support additional datatypes. If you find a bug, either contact me, or just fix it ;)
